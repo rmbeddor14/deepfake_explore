@@ -94,3 +94,8 @@ nvidia-smi
 NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
 ```
 - maybe i just need to pull one of the ami's with the driver installed since my goal here isn't really to explore the driver situation with nvidia. will take break and return later and will try a new ami. 
+- can't stop a spot instance apparently 
+![alt text](<img/CleanShot 2025-03-06 at 15.32.32@2x.png>)
+- maybe i'll terminate since i need to redeploy with that deep learning ami anyways 
+- terminated
+- well at least i learned something about spot instances and amis , will try again with deep learning ami 
