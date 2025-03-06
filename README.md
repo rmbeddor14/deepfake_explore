@@ -12,6 +12,8 @@ learning about deepfakes
 - do we even need to do training to make a deepfake anymore? How has the process changed from [2019](https://jsoverson.medium.com/from-zero-to-deepfake-310551e59aa3) 
 
 # Notes
+
+## 2025-March-6
 - deploying on AWS 
 - earlier I had asked for quota increase of g series VM but accidentally requested spot instead of on-demand, so I am going to use spot since that was what was approved
 - this is good for me too because I don't think I've really used spot instances like this before. Maybe I'll learn something. 
@@ -85,3 +87,10 @@ sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute
 sudo dnf -y module install nvidia-driver:latest-dkms
 sudo dnf -y install cuda
 ```
+
+- rebooted but had same issue
+```
+nvidia-smi
+NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.
+```
+- maybe i just need to pull one of the ami's with the driver installed since my goal here isn't really to explore the driver situation with nvidia. will take break and return later and will try a new ami. 
