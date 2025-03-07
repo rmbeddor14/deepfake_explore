@@ -256,3 +256,383 @@ pip3 install torch torchvision torchaudio --index-url https://download.pytorch.o
 ```
 - I am trying because I am desperate to make a deepfake of me!  
 - also I think I signed over my data to this company but whatever 
+- ok after I did the re-install now I've got a bunch of dependency warnings again 
+- ok I tried to run the command there's some weight issue 
+```
+tts --text "Hello, this is my cloned voice!" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 00_clone_test.wav
+```
+
+- while waiting i researched
+
+
+> How XTTS V2 Generates Cloned Speech
+> 
+> Step 1: Text Input → You provide a text prompt (--text "Hello, this is my cloned voice!").
+> 
+> Step 2: Speaker Embedding → The model analyzes the provided speaker audio sample (--speaker_wav audio_from_hey_gen_2.wav) to extract voice characteristics (tone, pitch, accent).
+> 
+> Step 3: Speech Synthesis → The model applies the speaker embedding to generate new speech in the same voice.
+> 
+> Step 4: Output → The synthesized speech is saved as 00_clone_test.wav.
+
+
+- ugh it's still not working. I guess the issue is 
+- default weight loading behavior in that torch version 
+- XttsConfig class is not allowlisted something about needing to be safelisted 
+- add to allow list 
+
+
+```
+python3 -c "import torch; from TTS.tts.configs.xtts_config import XttsConfig; torch.serialization.add_safe_globals([XttsConfig])" && \
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 00_clone_test.wav
+```
+
+- still having issues
+```
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+```
+- what is the downside if it's not from trusted source? 
+- models are more than just weights
+- could load malicious code i guess
+- that's crazy though, who in the deepfake industry would be malicious? i refuse to believe it. 
+
+- need to find model path
+
+```
+python3 -c "import torch; torch.load('tts_models/multilingual/multi-dataset/xtts_v2', weights_only=False)" && \
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 00_clone_test.wav
+```
+- i think this might be a bug? https://github.com/pytorch/opacus/issues/690
+
+- https://github.com/coqui-ai/TTS/issues/4121
+
+- maybe i'll downgrade the torch version to before 2.6
+- `pip install torch==2.5.0 torchvision==0.16.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu118`
+
+- it didn't like that command because conflicting dependencies so trying again
+- omg i've been trying this for so long and it keeps going to 2.6 automatically! also what's with these different cuda versions. Another thing about nvidia! everyone says oooh the industry is dependent on cuda the industry is dependent on cuda. is it?? because it seems like this part of the process is quite ripe for disruption. and if you need a new cuda library for every version then like woudln't it be easy to switch idk. 
+
+- uninstall completely `pip uninstall torch torchvision torchaudio -y`
+- and then clear the cache `pip cache purge`
+```
+pip install torch==2.5.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+pip install torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+- ok but could you imagine if i had to reinstall all this crap because i had a spot instance 😱
+
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 00_clone_test.wav
+
+```
+
+- while waiting for this to fail i've been googling 
+- https://www.reddit.com/r/LocalLLaMA/comments/1eergmu/voicecloning_or_not_tts_models_better_than_xtts/
+
+- 
+
+- ok back to basic
+- which cuda? `nvcc --version`
+```
+nvcc --version
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2024 NVIDIA Corporation
+Built on Thu_Mar_28_02:18:24_PDT_2024
+Cuda compilation tools, release 12.4, V12.4.131
+Build cuda_12.4.r12.4/compiler.34097967_0
+```
+
+ok i've got 12.4
+
+so that was one issue
+- uninstalled and purged cache again
+
+- trying again, this is diff because it's using cuda 12.4
+
+`pip install torch==2.5.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124`
+
+- what even is cuda? 
+- cuda is software layer that takes the code you write and runs it in parallel over nvidia gpu 
+
+- finally was able to download after doing this 
+- ^ that is the right command
+- but I did get an error when I ran the clone thing
+
+- `AssertionError:  ❗ Language None is not supported. Supported languages are ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh-cn', 'hu', 'ko', 'ja', 'hi']`
+
+- trying the following
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 00_clone_test.wav \
+    --language_idx en
+```
+
+THAT WORKED I FINALLY GOT IT!!!
+
+Is there a way to do two readme.md files maybe i'll keep a copy of which commands worked? or i could paste this into chatgpt and have it find them for me. 
+
+WOW!
+
+it sounds good 
+
+it's in audio_output_files
+
+let me try on a diff model!!! 
+
+YourTTS? 
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/your_tts \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --language_idx en \
+    --out_path 00_yourtts_clone_test.wav
+```
+
+- wow that is really not as good! 
+- check it out int he voice cloner folder 
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/bark \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --language_idx en \
+    --out_path 00_bark_clone_test.wav
+```
+
+- it seems like the multilingual ones are the ones that support cloning maybe? i mean that seems unrelated idk
+
+![alt text](<img/CleanShot 2025-03-06 at 21.13.28@2x.png>)
+
+is this bark? https://github.com/suno-ai/bark
+
+
+- i couldn't get bark to download will try agian
+- it wasnted to get in some sudo file idk 
+
+- also while debugging i noticed theres a config option for tts for use cuda and i'm kinda curious if it even ran with cuda - how to tell? 
+
+- I ran `nvidia-smi -l` while running the command and didn't observe
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/your_tts \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --language_idx en \
+    --out_path 01_yourtts_clone_test.wav
+```
+
+![](<img/CleanShot 2025-03-06 at 21.23.02@2x.png>)
+
+- now i want to run with command that explicitly calls cuda to see 
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/your_tts \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --language_idx en \
+    --out_path 02_yourtts_clone_test.wav \
+    --use_cuda true 
+```
+
+- oh now it did it!! 
+- so I def need to be using like the --use_cuda true option! 
+
+![alt text](<img/CleanShot 2025-03-06 at 21.25.16@2x.png>)
+
+- also that's crazy you can totally clone your voice without a gpu
+- we have definitely learned something here!!! 
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 01_XTTS_v2_clone_test.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+- running the xtts i wonder if that one called cuda without it 
+
+- oh with explit run it uses more of the gpu and this was the "better" model but I'm kinda wondering if like maybe this is not a good way to do gpu monitoring 
+
+- next time need to find better gpu monitoring 
+
+![alt text](<img/CleanShot 2025-03-06 at 21.27.20@2x.png>)
+
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 02_XTTS_v2_clone_test.wav \
+    --language_idx en 
+
+```
+
+- OMG it totally doesn't use the GPU unless you explicitly tell it to
+- which means I've been voice cloning without a GPU 
+- those XTTS are running without a GPU
+- wait wtf why does the cuda one sound worse going to try again 
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 03_XTTS_v2_USECUDATEST_cone_test.wav \
+    --language_idx en \
+    --use_cuda true 
+
+```
+
+omg this is all over the place haha
+
+```
+tts --text 'Hello, this is my cloned voice!' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 04_XTTS_v2_USECUDATEST_cone_test.wav \
+    --language_idx en \
+    --use_cuda true 
+
+```
+
+its so difference inference to inference
+
+lets try to give it more data 
+
+```
+tts --text 'Hey! hows it going? I miss you! You should bring me some dinner. I am hungry' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 05_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'marry me in san carlos california or else' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 06_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'guess what? I finally got an nvidia gpu and then apparently my models werent even using it! turns out you can do the voice thing without it. ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 07_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'guess what? I finally got a gpu and then apparently my models werent even using it! turns out you can do the voice thing without it. ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 08_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'do you think its a red flag if someone is into deepfakes? i feel like its weird if a guy is into it but its ok that I am into it. its not a red flag for me. i promise. ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 09_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+- wow that one ^ really didn't work 
+- it's also making my voice super raspy haha that one was scary 
+
+```
+tts --text 'what percentage of san carlos, california do you think is kinda into deepfakes? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 10_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'Hey! Do you want to come to my company christmas party? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 11_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'Hey! Do you want to come to my company christmas party? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 12_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+- that one added like a groan to it haha
+
+```
+tts --text 'Hey! Do you want to come to my company christmas party? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 13_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+- i feel like part of the problem is that it's not me talking to someone the demo audio is me like talking to my web cam. which is different 
+
+```
+tts --text 'elon musk baby mama drama ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 14_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'did you hear about elon musks baby mama drama ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav audio_from_hey_gen_2.wav \
+    --out_path 15_XTTS_v2_USECUDATEST_more_text.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+- audio file where talking about baby mama drama and more colloquial 
+
+```
+tts --text 'did you hear about the elon musk baby mama drama?? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav baby_mama_drama.wav \
+    --out_path 16_XTTS_v2_USECUDATEST_baby_mama_drama.wav \
+    --language_idx en \
+    --use_cuda true 
+```
+
+```
+tts --text 'would you be mad if I had a meeting with the prime minister of india and didnt invite you? ' \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav baby_mama_drama.wav \
+    --out_path 17_XTTS_v2_USECUDATEST_baby_mama_drama.wav \
+    --language_idx en \
+    --use_cuda true 
+```
