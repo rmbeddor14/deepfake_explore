@@ -636,3 +636,45 @@ tts --text 'would you be mad if I had a meeting with the prime minister of india
     --language_idx en \
     --use_cuda true 
 ```
+
+## March 7, 2025
+
+- ok put the whole file through and make it good 
+- maybe i'll try to write something
+- need to adjust the command it can take a text file
+- put text file input_script_0.txt
+
+
+trying to get into the VM  `ssh -i ~/.ssh/newkp.pem ubuntu@44.221.73.197` but it's not going through i'm not sure what i'm doing wrong
+
+oh i'm at a wework in sf today because meeting jane later
+ok need to whitelist IP 
+this is what i mean!! why can't we whitelist device ID? is there a reason for that? 
+
+![](<img/CleanShot 2025-03-07 at 14.58.42@2x.png>)
+whitelisted 
+
+now i'm in
+note that theres a new ip today 
+
+```
+tts --text "$(cat input_script_0.txt)" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav inputs/baby_mama_drama.wav \
+    --out_path 00_XTTS_v2_script_0.wav \
+    --language_idx en \
+    --use_cuda true
+```
+im going to check once and then run it a few times since there's variability between inference (not sure the proper term for this?)
+
+wow the second run 02 is so bad compared to 01 
+
+`scp -i ~/.ssh/newkp.pem ubuntu@44.221.73.197:/home/ubuntu/00_XTTS_v2_script_0.wav .`
+
+i wonder if irl it would split up sentences and process separately (parallel) i wonder if that is how the video stuff works too 
+
+- add samples together maybe? 
+
+`ffmpeg -i "concat:speaker1.wav|speaker2.wav" -acodec copy combined_speaker.wav`
+
+
