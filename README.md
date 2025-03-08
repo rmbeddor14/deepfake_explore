@@ -55,7 +55,8 @@ learning about deepfakes
 
 
 # First Pass What Worked
-![alt text](<img/CleanShot 2025-03-07 at 16.22.33@2x.png>)
+![alt text](<img/CleanShot 2025-03-07 at 20.49.40@2x.png>)
+
 
 # Notes
 
@@ -806,4 +807,7 @@ i'm waiting for this
 - I scped and put in "my_first_deepfake.mp4"
 check it out in the video output folder!
 
-![alt text](<img/CleanShot 2025-03-07 at 16.22.33@2x.png>)
+![alt text](<img/CleanShot 2025-03-07 at 20.49.40@2x.png>)
+
+to do: put together into a whole script 
+
