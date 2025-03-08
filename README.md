@@ -47,7 +47,7 @@ learning about deepfakes
 |----------------------|-----------|
 | **How many GPUs does it take to make a deepfake in 2025?** | *Update 3/8: Possibly none? My first deepfake might not have used a GPU. I could add a script (one with CUDA, one without) for comparison.* |
 | **What process in deepfake takes the most compute?** | *Update 3/8: definitely not the audio, that was really easy. video was easier than I expected too. maybe training takes a lot? I didn't train for the lipsync video, I'm just doing inference* |
-| **Do we even need to do training to make a deepfake anymore? How has the process changed since [2019](https://jsoverson.medium.com/from-zero-to-deepfake-310551e59aa3)?** | *update 3/8, no you don't need to train for lipsync videos* |
+| **Do we even need to do training to make a deepfake anymore? How has the process changed since [2019](https://jsoverson.medium.com/from-zero-to-deepfake-310551e59aa3)?** | *Update 3/8, no you don't need to train for lipsync videos* |
 | **How does deepfake technology scale and what implications does this have on economics (e.g., longer videos, more users)?** | |
 | **What are some of the most accessible optimizations in deepfake inference? Does this change how we predict the GPU market?** | *Update 3/8: it seems like you can pretty easily make the audio better with some post processing tools. I'm very confident you could tweak that script to make a convincing lipsync deepfake with no additional training. But TBD on other optimizations  like scaling optimizations* |
 | **What happens when early-stage deepfake startups fail or consolidate? Can we predict how many GPUs will be back on the market?** | |
