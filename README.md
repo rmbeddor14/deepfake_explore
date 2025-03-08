@@ -1,5 +1,10 @@
 # deepfake_explore
 learning about deepfakes 
+# To Do
+[] put script together to put my work together (inference tts + lipsync)
+[] write tutorial on how to do it and clean up so others can do it
+
+[ ]double check by deploying a new vm and following the instructions
 
 # Background
 - I used HeyGen and [made a deepfake of myself](https://youtu.be/qxcd3a_MlH4?si=1_aRDOysW-olHqqv) to teach my family about some of the trends in AI. But they didn't get it and still didn't really understand that it was fake. This made me curious about the process and the future of this technology.
