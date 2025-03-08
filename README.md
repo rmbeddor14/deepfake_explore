@@ -42,13 +42,15 @@ learning about deepfakes
 
 - I also wonder if we can kind of feel the difference of running this type of inference on Groq & Cerebras vs Nvidia, that can give us a feel for how the market dynamics will work in this sector as startups like Groq and Cerebras scale up. 
 
-# Some Guiding Questions
-- how many GPUs does it take to make a deepfake in 2025? 
-- what process in deepfake takes the most compute? 
-- do we even need to do training to make a deepfake anymore? How has the process changed from [2019](https://jsoverson.medium.com/from-zero-to-deepfake-310551e59aa3) 
-- How does deepfake technology scale and what implications does this have on economics (e.g. what if I want a *longer* video? what if I want *more users* generating videos?)
-- What are some of the most accessible optimizations in deepfake inference? Does this change how we predict the GPU market at all? 
-- What happens when the early stage deepfake startups fail or consolidate? Can we predict how many GPUs will be back on the market? 
+# Some Guiding Questions 
+| **Guiding Question** | **Answer** |
+|----------------------|-----------|
+| **How many GPUs does it take to make a deepfake in 2025?** | *Update 3/8: Possibly none? My first deepfake might not have used a GPU. I could add a script (one with CUDA, one without) for comparison.* |
+| **What process in deepfake takes the most compute?** | *Update 3/8: definitely not the audio, that was really easy. video was easier than I expected too. maybe training? I'm just inferencing** |
+| **Do we even need to do training to make a deepfake anymore? How has the process changed since [2019](https://jsoverson.medium.com/from-zero-to-deepfake-310551e59aa3)?** | *update 3/8, no you don't need to train for lipsync videos* |
+| **How does deepfake technology scale and what implications does this have on economics (e.g., longer videos, more users)?** | |
+| **What are some of the most accessible optimizations in deepfake inference? Does this change how we predict the GPU market?** | *update 3/8: it seems like you can pretty easily make the audio better with some post processing tools. TBD on other optimizations  like scaling optimizations* |
+| **What happens when early-stage deepfake startups fail or consolidate? Can we predict how many GPUs will be back on the market?** | |
 
 # Hardware / Software
 - I'm mostly writing this so i can easily start new chatgpt threads by telling it all my info 
