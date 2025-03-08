@@ -54,6 +54,9 @@ learning about deepfakes
 - torch version is 2.5.0+cu124 [ got that from `python3 -c "import torch; print(torch.__version__)"`]
 
 
+# First Pass What Worked
+![alt text](<img/CleanShot 2025-03-07 at 16.22.33@2x.png>)
+
 # Notes
 
 ## 2025-March-6
@@ -803,3 +806,4 @@ i'm waiting for this
 - I scped and put in "my_first_deepfake.mp4"
 check it out in the video output folder!
 
+![alt text](<img/CleanShot 2025-03-07 at 16.22.33@2x.png>)
