@@ -797,3 +797,9 @@ python3 inference.py --checkpoint_path ~/.wav2lip/checkpoints/wav2lip_gan.pth \
 i'm waiting for this
 
 ![alt text](<img/CleanShot 2025-03-07 at 16.10.01@2x.png>)
+
+- WOW THAT WORKED!! 
+- it looks ok i mean it's clearly fake but it's good
+- I scped and put in "my_first_deepfake.mp4"
+check it out in the video output folder!
+
