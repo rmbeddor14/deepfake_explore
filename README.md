@@ -8,7 +8,7 @@ learning about deepfakes
 # Background
 - I used HeyGen and [made a deepfake of myself](https://youtu.be/qxcd3a_MlH4?si=1_aRDOysW-olHqqv) to teach my family about some of the trends in AI. But they didn't get it and still didn't really understand that it was fake. This made me curious about the process and the future of this technology.
 
-- I was telling the story to friends and talked about how generous the HeyGen free plan is. But then I realized I didn't really *actually* know that the HeyGen plan is generous because I don't know how many GPUs they *actually* use. 
+- I was telling the story to friends and talked about how *generous* the HeyGen free plan is (meaning, I thought they gave a ton of compute for free to their free trial users). But then I realized I didn't really *actually* know that the HeyGen plan is generous because I don't know how many GPUs they *actually* use. 
 
 - Most of my friends that use AI inference at work just issue api requests, so they don't really know how many GPUs are used for their work either because it's obfuscated by the API request. 
 
