@@ -46,6 +46,14 @@ learning about deepfakes
 - What are some of the most accessible optimizations in deepfake inference? Does this change how we predict the GPU market at all? 
 - What happens when the early stage deepfake startups fail or consolidate? Can we predict how many GPUs will be back on the market? 
 
+# Hardware / Software
+- I'm mostly writing this so i can easily start new chatgpt threads by telling it all my info 
+- i'm using a g4dn.xlarge
+- Tesla T4 [got that from `nvidia-smi` command]
+- cuda_12.4.r12.4/compiler.34097967_0 [got that from `nvcc --version` command]
+- torch version is 2.5.0+cu124 [ got that from `python3 -c "import torch; print(torch.__version__)"`]
+
+
 # Notes
 
 ## 2025-March-6
@@ -675,6 +683,117 @@ i wonder if irl it would split up sentences and process separately (parallel) i 
 
 - add samples together maybe? 
 
-`ffmpeg -i "concat:speaker1.wav|speaker2.wav" -acodec copy combined_speaker.wav`
+<!-- `ffmpeg -i "concat:audio_from_hey_gen_2.wav|baby_mama_drama.wav" -acodec copy combined_samples.wav` -->
+
+- ^ that didn't work 
+
+`ffmpeg -i audio_from_hey_gen_2.wav -i baby_mama_drama.wav -filter_complex "[0:a][1:a]concat=n=2:v=0:a=1[out]" -map "[out]" combined_samples.wav`
+
+- ^ this one works 
 
 
+```
+tts --text "$(cat input_script_0.txt)" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav inputs/combined_samples.wav \
+    --out_path outputs/combined_speaker_script0/00_XTTS_v2_combined_speaker_script_0.wav \
+    --language_idx en \
+    --use_cuda true
+```
+
+- ok that sounded raspy (more like my first sample)
+- i'm going to switch the way the sample is ordered
+
+`ffmpeg -i baby_mama_drama.wav -i audio_from_hey_gen_2.wav -filter_complex "[0:a][1:a]concat=n=2:v=0:a=1[out]" -map "[out]" combined_samples_flip.wav`
+
+- it did sound like it picked up on both though but i'm just kind of curious if flipping matters (this is probably a better question to research rather than test)
+
+```
+tts --text "$(cat input_script_0.txt)" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav inputs/combined_samples_flip.wav \
+    --out_path outputs/combined_speaker_script0/01_XTTS_v2_combined_speaker_script_0.wav \
+    --language_idx en \
+    --use_cuda true
+```
+
+```
+tts --text "$(cat input_script_0.txt)" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav inputs/combined_samples_flip.wav \
+    --out_path outputs/combined_speaker_script0/05_XTTS_v2_combined_speaker_script_0.wav \
+    --language_idx en \
+    --use_cuda true
+```
+
+- ok it's probably ok for now since this is just playing around. I think there are lots of ways to improve it but the quality is pretty good at default with this model. 
+- 02 is pretty good
+- 04 is pretty good too 
+
+- i can probably improve the audio by just running the samples through low pass filters etc 
+
+- i have five samples to choose from so that's pretty good 
+
+
+
+### wav2lip
+- now i'm going to do the video processing
+- i anticipate this will require cuda (though i was surprised the audio didn't! i wonder if audio always hasn't or if thats from improvements in models and i wonder how this differs from video )
+- chatgpt says until like 2019 the voice models required cuda (Tacotron, WaveNet, and DeepVoice) and it says like it wasn't until 2023 that this became optimized (XTTS v2, VITS, and models like Bark)
+
+`pip3 install wav2lip`
+`mkdir -p ~/.wav2lip/checkpoints`
+
+`wget "https://github.com/Rudrabha/Wav2Lip/releases/download/v1.0/wav2lip_gan.pth" -O ~/.wav2lip/checkpoints/wav2lip_gan.pth`
+
+- not sure which one to get?`
+
+- 
+```
+sudo apt install git-lfs -y
+git lfs install
+```
+
+`git clone https://huggingface.co/n01e1se/wav2lip_gan`
+
+
+```
+mkdir -p ~/.wav2lip/checkpoints
+mv wav2lip_gan/wav2lip_gan.pth ~/.wav2lip/checkpoints/wav2lip_gan.pth
+```
+
+- ok i def made two checkpoints folders by accident, one in `.wav2lip` and one in `wav2lip` (where i cloned it) nad i have no idea if that matters because a file did appear int he `wav2lip` directory (not the period one) but i'm not going to do anything because i'm trying to move forward and whatever
+
+- moved the video file `/home/ubuntu/inputs/video_input_files/hey_gen_2.mp4`
+
+```
+python3 inference.py --checkpoint_path ~/.wav2lip/checkpoints/wav2lip_gan.pth \
+    --face /home/ubuntu/inputs/video_input_files/hey_gen_2.mp4 \
+    --audio /home/ubuntu/outputs/combined_speaker_script0/04_XTTS_v2_combined_speaker_script_0.wav \
+    --outfile output.mp4
+```
+
+- ok i had a ton of issues with wav2lip i tried to install manually
+
+```
+git clone https://github.com/Rudrabha/Wav2Lip.git
+cd Wav2Lip
+```
+and then running from there instead of using pip or anything 
+
+- some dependency issue
+- `pip install librosa==0.8.1 --no-cache-dir`
+
+- ok i'm going to have to use the virtual environments later 
+- too many issues with torch etc
+
+```
+python3 inference.py --checkpoint_path ~/.wav2lip/checkpoints/wav2lip_gan.pth \
+    --face /home/ubuntu/inputs/video_input_files/hey_gen_2.mp4 \
+    --audio /home/ubuntu/outputs/combined_speaker_script0/04_XTTS_v2_combined_speaker_script_0.wav \
+    --outfile output.mp4
+```
+
+i'm waiting for this
+
+![alt text](<img/CleanShot 2025-03-07 at 16.10.01@2x.png>)
