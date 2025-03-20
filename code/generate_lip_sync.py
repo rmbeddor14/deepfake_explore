@@ -26,7 +26,10 @@ def generate_speech(input_text_file, speaker_wav, output_wav, language='en', use
     tts.tts_to_file(text=text, speaker_wav=speaker_wav, language=language, file_path=output_wav)
     print(f"[INFO] Speech synthesis complete. Output saved to {output_wav}.")
 
-#change run_wav2lip to be inside inference folder 
+## change wav2lip tob e inside inference folder and add logging
+import subprocess
+import os
+
 def run_wav2lip(face_video, audio_wav, output_video):
     print("[INFO] Running Wav2Lip using subprocess...")
 
@@ -46,14 +49,29 @@ def run_wav2lip(face_video, audio_wav, output_video):
 
     print(f"[DEBUG] Executing command: {' '.join(command)}")
 
-    result = subprocess.run(command, capture_output=True, text=True, cwd=os.path.expanduser("~/Wav2Lip"))
+    process = subprocess.Popen(
+        command,
+        cwd=os.path.expanduser("~/Wav2Lip"),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
 
-    if result.returncode == 0:
+    # Print output in real-time
+    for line in process.stdout:
+        print(line, end="")  # Print stdout line by line
+
+    for line in process.stderr:
+        print(line, end="")  # Print stderr line by line
+
+    process.wait()  # Wait for process to finish
+
+    if process.returncode == 0:
         print(f"[INFO] Wav2Lip processing complete. Output saved to {output_video}.")
     else:
-        print(f"[ERROR] Wav2Lip failed with error:\n{result.stderr}")
+        print(f"[ERROR] Wav2Lip failed with error. Check logs above.")
 
-
+# #change run_wav2lip to be inside inference folder 
 # def run_wav2lip(face_video, audio_wav, output_video):
 #     print("[INFO] Running Wav2Lip using subprocess...")
 
@@ -64,7 +82,7 @@ def run_wav2lip(face_video, audio_wav, output_video):
 #         return
 
 #     command = [
-#         "python3", os.path.expanduser("~/Wav2Lip/inference.py"),
+#         "python3", "inference.py",
 #         "--checkpoint_path", checkpoint_path,
 #         "--face", face_video,
 #         "--audio", audio_wav,
@@ -73,12 +91,13 @@ def run_wav2lip(face_video, audio_wav, output_video):
 
 #     print(f"[DEBUG] Executing command: {' '.join(command)}")
 
-#     result = subprocess.run(command, capture_output=True, text=True)
+#     result = subprocess.run(command, capture_output=True, text=True, cwd=os.path.expanduser("~/Wav2Lip"))
 
 #     if result.returncode == 0:
 #         print(f"[INFO] Wav2Lip processing complete. Output saved to {output_video}.")
 #     else:
 #         print(f"[ERROR] Wav2Lip failed with error:\n{result.stderr}")
+
 
 
 def main():

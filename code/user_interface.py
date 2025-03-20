@@ -54,7 +54,7 @@ import threading
 import shutil  # Added for deleting the folder
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = "/home/ubuntu/code/uploads" #make an absolute path because the wav2lip inference running in local due to annoying reasons 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Lock to ensure only one process runs at a time
@@ -110,7 +110,7 @@ def upload_files():
                 "--output_video", output_video
             ]
             subprocess.run(command, check=True)
-            return jsonify({'message': 'Processing complete', 'output_video': output_video})
+            return jsonify({'message': 'Processing complete', 'output_video': 'uploads/output.mp4'}) # manual link because I need the code that gets processed to actually be absolute path but doesn't work for browser
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 

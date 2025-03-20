@@ -63,6 +63,16 @@ learning about deepfakes
 # First Pass What Worked
 ![alt text](<img/CleanShot 2025-03-07 at 20.49.40@2x.png>)
 
+# How to Use
+- see `demos/an unscripted guided demo Mar 19.mp4` (I don't think github lets me just put this in there but lets see) <video controls src="demos/an unscripted guided demo Mar 19.mp4" title="Title"></video> for a little walk through 
+- `python3 user_interface.py` 
+- `{ip address of aws vm: 5000}` in browser. if it doesn't come up, make sure aws whitelist for 5000 for your ip 
+- add files 
+- a download link will appear unless you refresh
+- if you refresh just get the download from the ssh 
+
+- note: - going to have to clean up some of this because Wav2Lip is currently like downloaded on my machine in a folder (it's not like installed or in a package) and the python code just instructs it to jump in that folder and execute the code. So eventually I need to package all this together and clean it up. but here's the basics 
+
 
 # Notes
 
@@ -904,3 +914,9 @@ two processes show up which is a little confusing
 - this is annoying so i think the issue is still that inference.py it expects to be run inside the `Wav2Gen` folder. running again directly to test 
 
 
+- ok I tested it a few times by running just the `generate_lip_sync.py` and did get it to work. now trying with the `user_interface.py`
+
+- i'll share all the info here and then write up instructions for how to use 
+
+
+- check out `demos/an unscripted guided demo Mar 19.mp4` to see a demo and hear me think through things in the wild! 
