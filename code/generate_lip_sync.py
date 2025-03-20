@@ -26,7 +26,7 @@ def generate_speech(input_text_file, speaker_wav, output_wav, language='en', use
     tts.tts_to_file(text=text, speaker_wav=speaker_wav, language=language, file_path=output_wav)
     print(f"[INFO] Speech synthesis complete. Output saved to {output_wav}.")
 
-
+#change run_wav2lip to be inside inference folder 
 def run_wav2lip(face_video, audio_wav, output_video):
     print("[INFO] Running Wav2Lip using subprocess...")
 
@@ -37,7 +37,7 @@ def run_wav2lip(face_video, audio_wav, output_video):
         return
 
     command = [
-        "python3", os.path.expanduser("~/Wav2Lip/inference.py"),
+        "python3", "inference.py",
         "--checkpoint_path", checkpoint_path,
         "--face", face_video,
         "--audio", audio_wav,
@@ -46,12 +46,39 @@ def run_wav2lip(face_video, audio_wav, output_video):
 
     print(f"[DEBUG] Executing command: {' '.join(command)}")
 
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = subprocess.run(command, capture_output=True, text=True, cwd=os.path.expanduser("~/Wav2Lip"))
 
     if result.returncode == 0:
         print(f"[INFO] Wav2Lip processing complete. Output saved to {output_video}.")
     else:
         print(f"[ERROR] Wav2Lip failed with error:\n{result.stderr}")
+
+
+# def run_wav2lip(face_video, audio_wav, output_video):
+#     print("[INFO] Running Wav2Lip using subprocess...")
+
+#     checkpoint_path = os.path.expanduser("~/.wav2lip/checkpoints/wav2lip_gan.pth")
+
+#     if not os.path.exists(checkpoint_path):
+#         print(f"[ERROR] Checkpoint file not found: {checkpoint_path}")
+#         return
+
+#     command = [
+#         "python3", os.path.expanduser("~/Wav2Lip/inference.py"),
+#         "--checkpoint_path", checkpoint_path,
+#         "--face", face_video,
+#         "--audio", audio_wav,
+#         "--outfile", output_video
+#     ]
+
+#     print(f"[DEBUG] Executing command: {' '.join(command)}")
+
+#     result = subprocess.run(command, capture_output=True, text=True)
+
+#     if result.returncode == 0:
+#         print(f"[INFO] Wav2Lip processing complete. Output saved to {output_video}.")
+#     else:
+#         print(f"[ERROR] Wav2Lip failed with error:\n{result.stderr}")
 
 
 def main():

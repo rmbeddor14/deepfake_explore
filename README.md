@@ -899,3 +899,8 @@ two processes show up which is a little confusing
 - this will tell me if the issue is the model generation or the code 
 - regardless it's kind of the code 
 - will commit inc ase i crash again
+
+
+- this is annoying so i think the issue is still that inference.py it expects to be run inside the `Wav2Gen` folder. running again directly to test 
+
+
