@@ -1,7 +1,7 @@
 # deepfake_explore
 learning about deepfakes 
 # To Do
-- [ ] put python script together to put my work together (inference tts + lipsync)
+- [x] put python script together to put my work together (inference tts + lipsync)
 - [ ] write tutorial on how to do it and clean up so others can do it
 - [ ] double check by deploying a new vm and following the instructions
 
