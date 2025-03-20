@@ -854,3 +854,48 @@ python3 inference.py --checkpoint_path ~/.wav2lip/checkpoints/wav2lip_gan.pth \
 - crashed
 - `sudo lsof -i :5000` check the pid 
 - `kill -9 {pid}`
+
+
+- test api with curl 
+
+```
+curl -X POST http://127.0.0.1:5000/lip-sync \
+     -H "Content-Type: application/json" \
+     -d '{
+           "text": "../input_script_0.txt",
+           "audio": "../inputs/audio_input_files/combined_samples.wav",
+           "face": "../inputs/video_input_files/hey_gen_2.mp4",
+           "output_audio": "../outputs/combined_speaker_script0/00_XTTS_v2_combined_speaker_script_0.wav",
+           "output_video": "output.mp4"
+         }'
+```
+
+- ugh had to reboot beecause crashing
+- this is problem with directly editing file on remote and not saving local, now pita 
+- i hit reboot from the aws side
+- going to try to get bare minimum for today, take a video and be done
+- i am fully stopping and restarting, which is a pain because the ip switches
+- ` ssh -i ~/.ssh/newkp.pem ubuntu@44.200.85.222`
+
+- to make it sticky added "status" so that the api won't process videos if it's already working on it (to prevent more crashes) 
+![](img/status.gif)
+
+
+`nvidia-smi -l` to see the  nvidia usage 
+two processes show up which is a little confusing
+![alt text](<img/CleanShot 2025-03-19 at 19.01.43.png>)
+
+- need to add a download button lol
+
+- while waiting for first test video to render created a new video for test and saved in here. also created new script. lets try to make a new one! 
+
+- oh no, the output file is like deleting or something 
+
+- but everything seems fine in the log
+
+- `python3 /home/ubuntu/Wav2Lip/inference.py --checkpoint_path /home/ubuntu/.wav2lip/checkpoints/wav2lip_gan.pth --face uploads/hey_gen_2.mp4 --audio uploads/output_audio.wav --outfile uploads/output.mp4` i got that in the print out
+
+- i will do it again on it's own to see what happens 
+- this will tell me if the issue is the model generation or the code 
+- regardless it's kind of the code 
+- will commit inc ase i crash again
