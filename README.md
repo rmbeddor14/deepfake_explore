@@ -817,3 +817,40 @@ check it out in the video output folder!
 
 to do: put together into a whole script 
 
+## March 19 2025
+- put together a whole script 
+- should take in an audio sample, script, and video 
+
+- side note : I'm interested in learning more about the snapchat style of cv in the future - seems so much more efficient, why is gan so much more hype? did some basic searches and gan is pixel by pixel, but i don't really grasp this without doing a snapchat style test. snapchat does more face tracking / facial landmark detection. it can warm facial features but not learn new mouth features. Will return to this later because I'm curious about the differences. 
+
+- as a reminder here are the commmands that worked: 
+
+```
+tts --text "$(cat input_script_0.txt)" \
+    --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
+    --speaker_wav inputs/combined_samples.wav \
+    --out_path outputs/combined_speaker_script0/00_XTTS_v2_combined_speaker_script_0.wav \
+    --language_idx en \
+    --use_cuda true
+```
+
+```
+python3 inference.py --checkpoint_path ~/.wav2lip/checkpoints/wav2lip_gan.pth \
+    --face /home/ubuntu/inputs/video_input_files/hey_gen_2.mp4 \
+    --audio /home/ubuntu/outputs/combined_speaker_script0/04_XTTS_v2_combined_speaker_script_0.wav \
+    --outfile output.mp4
+```
+- where `inference.py` is `~/Wav2Lip/inference.py`
+- new ip 98.84.11.234
+- i also have a new ip on my wifi so i added to the security group
+- `ssh -i ~/.ssh/newkp.pem ubuntu@98.84.11.234`
+
+- calling the directory for this "code" because "scripts" is confusing with the english text scripts
+
+- having chatgpt make me a little ui 
+- gated to just my IP for now
+
+
+- crashed
+- `sudo lsof -i :5000` check the pid 
+- `kill -9 {pid}`

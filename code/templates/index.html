@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files for Lip-Sync</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        .upload-container {
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Upload Required Files</h2>
+
+    <div class="upload-container">
+        <p>Upload Script (.txt)</p>
+        <input type="file" id="scriptInput" accept=".txt">
+        <button id="uploadScriptBtn">Upload Script</button>
+        <p id="scriptStatus"></p>
+    </div>
+
+    <div class="upload-container">
+        <p>Upload Speaker Sample (.wav)</p>
+        <input type="file" id="speakerInput" accept=".wav">
+        <button id="uploadSpeakerBtn">Upload Speaker</button>
+        <p id="speakerStatus"></p>
+    </div>
+
+    <div class="upload-container">
+        <p>Upload Face Video (.mp4)</p>
+        <input type="file" id="videoInput" accept=".mp4">
+        <button id="uploadVideoBtn">Upload Video</button>
+        <p id="videoStatus"></p>
+    </div>
+
+    <button id="processBtn" class="hidden">Start Processing</button>
+
+    <script>
+        let uploadedFiles = { text_file: null, speaker_wav: null, face_video: null };
+
+        function uploadFile(inputId, uploadBtnId, statusId, key) {
+            $("#" + uploadBtnId).click(function () {
+                let fileInput = $("#" + inputId)[0];
+                if (fileInput.files.length === 0) {
+                    alert("Please select a file before uploading.");
+                    return;
+                }
+
+                let file = fileInput.files[0];
+                let formData = new FormData();
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/upload",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            uploadedFiles[key] = response.filepath;
+                            $("#" + statusId).text("Uploaded: " + file.name);
+                            checkReady();
+                        } else {
+                            alert(response.error);
+                        }
+                    }
+                });
+            });
+        }
+
+        function checkReady() {
+            if (uploadedFiles.text_file && uploadedFiles.speaker_wav && uploadedFiles.face_video) {
+                $("#processBtn").removeClass("hidden");
+            }
+        }
+
+        uploadFile("scriptInput", "uploadScriptBtn", "scriptStatus", "text_file");
+        uploadFile("speakerInput", "uploadSpeakerBtn", "speakerStatus", "speaker_wav");
+        uploadFile("videoInput", "uploadVideoBtn", "videoStatus", "face_video");
+
+        $("#processBtn").click(function () {
+            $.ajax({
+                url: "/process",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(uploadedFiles),
+                success: function (response) {
+                    alert(response.message);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
